@@ -2,7 +2,7 @@
 
 namespace Evaneos;
 
-use Evaneos\Context\ApplicationContext;
+use Evaneos\Entity\Destination;
 use Evaneos\Entity\Quote;
 use Evaneos\Entity\Template;
 use Evaneos\Entity\User;
@@ -12,6 +12,16 @@ use Evaneos\Repository\SiteRepository;
 
 class TemplateManager
 {
+    /**
+     * @var User
+     */
+    private $currentUser;
+
+    public function __construct(User $currentUser)
+    {
+        $this->currentUser = $currentUser;
+    }
+
     public function getTemplateComputed(Template $tpl, array $data)
     {
         if (!$tpl) {
@@ -29,15 +39,13 @@ class TemplateManager
 
     private function computeText($text, array $data)
     {
-        $APPLICATION_CONTEXT = ApplicationContext::getInstance();
-
         /* @var $quote Quote */
         $quote = (isset($data['quote']) and $data['quote'] instanceof Quote) ? $data['quote'] : null;
 
         if ($quote)
         {
             $_quoteFromRepository = QuoteRepository::getInstance()->getById($quote->getId());
-            $usefulObject = SiteRepository::getInstance()->getById($quote->getSiteId());
+            $site = SiteRepository::getInstance()->getById($quote->getSiteId());
             $destinationOfQuote = DestinationRepository::getInstance()->getById($quote->getDestinationId());
 
             if(strpos($text, '[quote:destination_link]') !== false){
@@ -67,8 +75,9 @@ class TemplateManager
             (strpos($text, '[quote:destination_name]') !== false) and $text = str_replace('[quote:destination_name]',$destinationOfQuote->getCountryName(),$text);
         }
 
+        /* @var $destination Destination */
         if (isset($destination))
-            $text = str_replace('[quote:destination_link]', $usefulObject->getUrl() . '/' . $destination->getCountryName() . '/quote/' . $_quoteFromRepository->getId(), $text);
+            $text = str_replace('[quote:destination_link]', $site->getUrl() . '/' . $destination->getCountryName() . '/quote/' . $_quoteFromRepository->getId(), $text);
         else
             $text = str_replace('[quote:destination_link]', '', $text);
 
@@ -76,9 +85,11 @@ class TemplateManager
          * USER
          * [user:*]
          */
-        $_user  = (isset($data['user'])  and ($data['user']  instanceof User))  ? $data['user']  : $APPLICATION_CONTEXT->getCurrentUser();
-        if($_user) {
-            (strpos($text, '[user:first_name]') !== false) and $text = str_replace('[user:first_name]'       , ucfirst(mb_strtolower($_user->getFirstname())), $text);
+
+        /* @var $user User */
+        $user  = (isset($data['user'])  and ($data['user']  instanceof User))  ? $data['user']  : $this->currentUser;
+        if($user) {
+            (strpos($text, '[user:first_name]') !== false) and $text = str_replace('[user:first_name]'       , ucfirst(mb_strtolower($user->getFirstname())), $text);
         }
 
         return $text;

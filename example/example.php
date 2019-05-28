@@ -6,6 +6,7 @@ use Faker\Factory;
 use Evaneos\Entity\Template;
 use Evaneos\TemplateManager;
 use Evaneos\Entity\Quote;
+use Evaneos\Context\ApplicationContext;
 
 $faker = Factory::create();
 
@@ -22,7 +23,7 @@ Bien cordialement,
 L'équipe Evaneos.com
 www.evaneos.com
 ");
-$templateManager = new TemplateManager();
+$templateManager = new TemplateManager(ApplicationContext::getInstance()->getCurrentUser());
 
 $message = $templateManager->getTemplateComputed(
     $template,

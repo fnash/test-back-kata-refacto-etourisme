@@ -1,5 +1,7 @@
 <?php
 
+namespace Evaneos\Helper;
+
 trait SingletonTrait
 {
     /**

@@ -1,5 +1,11 @@
 <?php
 
+namespace Evaneos\Repository;
+
+use Evaneos\Entity\Site;
+use Evaneos\Helper\SingletonTrait;
+use \Faker as Faker;
+
 class SiteRepository implements Repository
 {
     use SingletonTrait;

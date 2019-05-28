@@ -5,6 +5,16 @@
         "fzaninotto/faker": "v1.6.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8|^5.7"
+        "phpunit/phpunit": "^8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Evaneos\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Evaneos\\": "tests/"
+        }
     }
 }

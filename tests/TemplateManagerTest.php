@@ -1,38 +1,31 @@
 <?php
 
-require_once __DIR__ . '/../src/Entity/Destination.php';
-require_once __DIR__ . '/../src/Entity/Quote.php';
-require_once __DIR__ . '/../src/Entity/Site.php';
-require_once __DIR__ . '/../src/Entity/Template.php';
-require_once __DIR__ . '/../src/Entity/User.php';
-require_once __DIR__ . '/../src/Helper/SingletonTrait.php';
-require_once __DIR__ . '/../src/Context/ApplicationContext.php';
-require_once __DIR__ . '/../src/Repository/Repository.php';
-require_once __DIR__ . '/../src/Repository/DestinationRepository.php';
-require_once __DIR__ . '/../src/Repository/QuoteRepository.php';
-require_once __DIR__ . '/../src/Repository/SiteRepository.php';
-require_once __DIR__ . '/../src/TemplateManager.php';
+namespace Tests\Evaneos;
 
-class TemplateManagerTest extends PHPUnit_Framework_TestCase
+use Evaneos\Context\ApplicationContext;
+use Evaneos\Entity\Quote;
+use Evaneos\Entity\Template;
+use Evaneos\Repository\DestinationRepository;
+use Evaneos\TemplateManager;
+use PHPUnit\Framework\TestCase;
+
+final class TemplateManagerTest extends TestCase
 {
     /**
      * Init the mocks
      */
-    public function setUp()
+    protected function setUp(): void
     {
     }
 
     /**
      * Closes the mocks
      */
-    public function tearDown()
+    protected function tearDown(): void
     {
     }
 
-    /**
-     * @test
-     */
-    public function test()
+    public function testGetTemplateComputed()
     {
         $faker = \Faker\Factory::create();
 

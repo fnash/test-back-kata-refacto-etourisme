@@ -1,5 +1,7 @@
 <?php
 
+namespace Evaneos\Entity;
+
 class Site
 {
     public $id;

@@ -1,5 +1,11 @@
 <?php
 
+namespace Evaneos\Context;
+
+use Evaneos\Entity\Site;
+use Evaneos\Entity\User;
+use Evaneos\Helper\SingletonTrait;
+
 class ApplicationContext
 {
     use SingletonTrait;

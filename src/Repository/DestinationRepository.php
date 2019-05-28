@@ -1,5 +1,11 @@
 <?php
 
+namespace Evaneos\Repository;
+
+use Evaneos\Entity\Destination;
+use Evaneos\Helper\SingletonTrait;
+use Faker\Factory;
+
 class DestinationRepository implements Repository
 {
     use SingletonTrait;
@@ -13,9 +19,9 @@ class DestinationRepository implements Repository
      */
     public function __construct()
     {
-        $this->country = Faker\Factory::create()->country;
+        $this->country = Factory::create()->country;
         $this->conjunction = 'en';
-        $this->computerName = Faker\Factory::create()->slug();
+        $this->computerName = Factory::create()->slug();
     }
 
     /**

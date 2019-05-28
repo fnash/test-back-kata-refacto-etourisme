@@ -26,12 +26,15 @@ class TemplateManager
      */
     private $renderers = [];
 
-    public function __construct(User $currentUser, array $targetEntities)
+    public function __construct(User $currentUser, array $renderers = [])
     {
         $this->currentUser = $currentUser;
-        $this->targetEntities = $targetEntities;
 
-        $this->initRenderers();
+        if (count($renderers)) {
+            $this->renderers = $renderers;
+        } else {
+            $this->initRenderers();
+        }
     }
 
     public function getTemplateComputed(Template $template, array $data)
@@ -55,10 +58,22 @@ class TemplateManager
         return $template;
     }
 
+    /**
+     * @param array $renderers
+     *
+     * @return self
+     */
+    public function setRenderers(array $renderers)
+    {
+        $this->renderers = $renderers;
+
+        return $this;
+    }
+
     private function initRenderers()
     {
         /* @var $renderer RendererInterface */
-        foreach ($this->targetEntities as $entityFqcn) {
+        foreach (static::TARGET_ENTITIES as $entityFqcn) {
             foreach (RendererFactory::FORMATS as $format) {
                 try {
                     $this->renderers[] = RendererFactory::get($entityFqcn, $format);

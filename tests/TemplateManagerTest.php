@@ -11,6 +11,22 @@ use PHPUnit\Framework\TestCase;
 
 final class TemplateManagerTest extends TestCase
 {
+    private static $content = <<<CONTENT
+    
+Bonjour {{firstName}},
+
+Merci d'avoir contacté un agent local pour votre voyage {{country}}.
+
+Bien cordialement,
+
+L'équipe Evaneos.com
+www.evaneos.com
+
+CONTENT;
+
+
+    private static $subject = 'Votre voyage avec une agence locale {{country}}';
+
     /**
      * @var User
      */
@@ -21,60 +37,60 @@ final class TemplateManagerTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->currentUser = $this->prophesize(User::class);
-    }
+        parent::setUp();
 
-    /**
-     * Closes the mocks
-     */
-    protected function tearDown(): void
-    {
+        $this->currentUser = $this->prophesize(User::class);
     }
 
     public function testGetTemplateComputed()
     {
-        $firstName = 'Fabien';
+        // init
+        $templateManager = $this->init();
 
+        $firstName = 'Fabien';
         $this->currentUser->getFirstname()->willReturn($firstName);
 
-        $faker = \Faker\Factory::create();
+        $quote = new Quote(1, 2, 3, new \DateTime('2019-05-28'));
+        $countryName = DestinationRepository::getInstance()->getByQuote($quote)->getCountryName();
 
-        $expectedDestination = DestinationRepository::getInstance()->getById($faker->randomNumber());
+        $template = new Template(1, $this->getSubjectTemplate(), $this->getContentTemplate());
 
-        $quote = new Quote($faker->randomNumber(), $faker->randomNumber(), $faker->randomNumber(), $faker->date());
 
-        $template = new Template(
-            1,
-            'Votre voyage avec une agence locale [quote:destination_name]',
-            "
-Bonjour [user:first_name],
-
-Merci d'avoir contacté un agent local pour votre voyage [quote:destination_name].
-
-Bien cordialement,
-
-L'équipe Evaneos.com
-www.evaneos.com
-");
-        $templateManager = new TemplateManager($this->currentUser->reveal(), TemplateManager::TARGET_ENTITIES);
-
-        $message = $templateManager->getTemplateComputed(
-            $template,
-            [
+        // exercice
+        $message = $templateManager->getTemplateComputed($template, [
                 'quote' => $quote
-            ]
-        );
+        ]);
 
-        $this->assertEquals('Votre voyage avec une agence locale ' . $expectedDestination->getCountryName(), $message->getSubject());
-        $this->assertEquals("
-Bonjour " . $firstName . ",
 
-Merci d'avoir contacté un agent local pour votre voyage " . $expectedDestination->getCountryName() . ".
+        // Assert
+        $this->assertEquals($this->getSubjectValue($countryName), $message->getSubject());
+        $this->assertEquals($this->getContentValue($countryName, $firstName), $message->getContent());
+    }
 
-Bien cordialement,
+    private function init()
+    {
+        // TODO inject mocks of renderers with supports(Any)->shouldReturn(true)
 
-L'équipe Evaneos.com
-www.evaneos.com
-", $message->getContent());
+        return new TemplateManager($this->currentUser->reveal());
+    }
+
+    private function getSubjectTemplate()
+    {
+        return str_replace('{{country}}', '[quote:destination_name]', static::$subject);
+    }
+
+    private function getSubjectValue($country)
+    {
+        return str_replace('{{country}}', $country, static::$subject);
+    }
+
+    private function getContentTemplate()
+    {
+        return str_replace(['{{country}}', '{{firstName}}'], ['[quote:destination_name]', '[user:first_name]'], static::$content);
+    }
+
+    private function getContentValue($country, $firstName)
+    {
+        return str_replace(['{{country}}', '{{firstName}}'], [$country, $firstName], static::$content);
     }
 }

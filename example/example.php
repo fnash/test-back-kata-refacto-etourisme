@@ -26,7 +26,7 @@ www.evaneos.com
 
 $currentUser = ApplicationContext::getInstance()->getCurrentUser();
 
-$templateManager = new TemplateManager($currentUser, TemplateManager::TARGET_ENTITIES);
+$templateManager = new TemplateManager($currentUser);
 
 $message = $templateManager->getTemplateComputed($template, [
         'quote' => new Quote($faker->randomNumber(), $faker->randomNumber(), $faker->randomNumber(), $faker->date())

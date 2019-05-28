@@ -10,8 +10,19 @@ class QuoteRepository implements Repository
 {
     use SingletonTrait;
 
+    /**
+     * @var int
+     */
     private $siteId;
+
+    /**
+     * @var int
+     */
     private $destinationId;
+
+    /**
+     * @var \DateTime
+     */
     private $date;
 
     /**

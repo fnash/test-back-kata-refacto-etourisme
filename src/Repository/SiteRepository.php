@@ -34,6 +34,12 @@ class SiteRepository implements Repository
         return new Site($id, $this->url);
     }
 
+
+    /**
+     * @param Quote $quote
+     *
+     * @return Site
+     */
     public function getByQuote(Quote $quote)
     {
         return $this->getById($quote->getSiteId());

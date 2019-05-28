@@ -44,6 +44,10 @@ class QuoteHtmlRenderer implements RendererInterface
      */
     public function supports($class)
     {
+        if (is_object($class)) {
+            $class = get_class($class);
+        }
+
         return Quote::class === $class;
     }
 }

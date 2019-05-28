@@ -43,7 +43,7 @@ class TemplateManager
         /* @var $renderer RendererInterface */
         foreach ($this->renderers as $renderer) {
             foreach ($data as $key => $entity) {
-                if ($renderer->supports(get_class($entity))) {
+                if ($renderer->supports($entity)) {
                     $template
                         ->setSubject($renderer->render($template->getSubject(), $entity))
                         ->setContent($renderer->render($template->getContent(), $entity))

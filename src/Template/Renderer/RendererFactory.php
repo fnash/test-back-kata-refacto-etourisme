@@ -30,7 +30,7 @@ class RendererFactory
         }
 
         if (!class_exists($fqcn)) {
-            throw new RendererNotFoundexception(sprintf('%s is missing. May be you should implement it?', $fqcn));
+            throw new RendererNotFoundException(sprintf('%s is missing. May be you should implement it?', $fqcn));
         }
 
         static::$cachedInstances[$fqcn] = new $fqcn();

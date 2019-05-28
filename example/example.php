@@ -23,13 +23,13 @@ Bien cordialement,
 L'équipe Evaneos.com
 www.evaneos.com
 ");
-$templateManager = new TemplateManager(ApplicationContext::getInstance()->getCurrentUser());
 
-$message = $templateManager->getTemplateComputed(
-    $template,
-    [
+$currentUser = ApplicationContext::getInstance()->getCurrentUser();
+
+$templateManager = new TemplateManager($currentUser, TemplateManager::TARGET_ENTITIES);
+
+$message = $templateManager->getTemplateComputed($template, [
         'quote' => new Quote($faker->randomNumber(), $faker->randomNumber(), $faker->randomNumber(), $faker->date())
-    ]
-);
+]);
 
 echo $message->getSubject() . "\n" . $message->getContent();

@@ -3,6 +3,7 @@
 namespace Evaneos\Repository;
 
 use Evaneos\Entity\Destination;
+use Evaneos\Entity\Quote;
 use Evaneos\Helper\SingletonTrait;
 use Faker\Factory;
 
@@ -38,5 +39,15 @@ class DestinationRepository implements Repository
             $this->conjunction,
             $this->computerName
         );
+    }
+
+    /**
+     * @param Quote $quote
+     *
+     * @return Destination
+     */
+    public function getByQuote(Quote $quote)
+    {
+        return $this->getById($quote->getDestinationId());
     }
 }

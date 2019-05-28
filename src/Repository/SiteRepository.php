@@ -2,6 +2,7 @@
 
 namespace Evaneos\Repository;
 
+use Evaneos\Entity\Quote;
 use Evaneos\Entity\Site;
 use Evaneos\Helper\SingletonTrait;
 use \Faker as Faker;
@@ -31,5 +32,10 @@ class SiteRepository implements Repository
     {
         // DO NOT MODIFY THIS METHOD
         return new Site($id, $this->url);
+    }
+
+    public function getByQuote(Quote $quote)
+    {
+        return $this->getById($quote->getSiteId());
     }
 }

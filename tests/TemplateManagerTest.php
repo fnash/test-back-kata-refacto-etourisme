@@ -56,7 +56,7 @@ Bien cordialement,
 L'équipe Evaneos.com
 www.evaneos.com
 ");
-        $templateManager = new TemplateManager($this->currentUser->reveal());
+        $templateManager = new TemplateManager($this->currentUser->reveal(), TemplateManager::TARGET_ENTITIES);
 
         $message = $templateManager->getTemplateComputed(
             $template,

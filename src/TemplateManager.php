@@ -9,17 +9,33 @@ use Evaneos\Entity\User;
 use Evaneos\Repository\DestinationRepository;
 use Evaneos\Repository\QuoteRepository;
 use Evaneos\Repository\SiteRepository;
+use Evaneos\Template\Renderer\RendererFactory;
+use Evaneos\Template\Renderer\RendererInterface;
 
 class TemplateManager
 {
+    const TARGET_ENTITIES = [
+        Quote::class,
+//        Destination::class,
+//        User::class
+    ];
+
     /**
      * @var User
      */
     private $currentUser;
 
-    public function __construct(User $currentUser)
+    /**
+     * @var array
+     */
+    private $renderers = [];
+
+    public function __construct(User $currentUser, array $targetEntities)
     {
         $this->currentUser = $currentUser;
+        $this->targetEntities = $targetEntities;
+
+        $this->initRenderers();
     }
 
     public function getTemplateComputed(Template $tpl, array $data)
@@ -29,10 +45,18 @@ class TemplateManager
         }
 
         $replaced = clone($tpl);
-        $replaced
-            ->setSubject($this->computeText($replaced->getSubject(), $data))
-            ->setContent($this->computeText($replaced->getContent(), $data))
-        ;
+
+        /* @var $renderer RendererInterface */
+        foreach ($this->renderers as $renderer) {
+            foreach ($data as $key => $entity) {
+                if ($renderer->supports(get_class($entity))) {
+                    $replaced
+                        ->setSubject($renderer->render($replaced->getSubject(), $entity))
+                        ->setContent($renderer->render($replaced->getContent(), $entity))
+                    ;
+                }
+            }
+        }
 
         return $replaced;
     }
@@ -93,5 +117,15 @@ class TemplateManager
         }
 
         return $text;
+    }
+
+    private function initRenderers()
+    {
+        /* @var $renderer RendererInterface */
+        foreach ($this->targetEntities as $entityFqcn) {
+            foreach (RendererFactory::FORMATS as $format) {
+                $this->renderers[] = RendererFactory::get($entityFqcn, $format);
+            }
+        }
     }
 }

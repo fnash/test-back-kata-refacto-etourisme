@@ -33,6 +33,10 @@ class RendererFactory
             throw new RendererNotFoundException(sprintf('%s is missing. May be you should implement it?', $fqcn));
         }
 
+        if (! (new \ReflectionClass($fqcn))->implementsInterface(RendererInterface::class)){
+            throw new \LogicException(sprintf('%s must implement %s', $fqcn, RendererInterface::class));
+        }
+
         static::$cachedInstances[$fqcn] = new $fqcn();
 
         return static::$cachedInstances[$fqcn];
